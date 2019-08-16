@@ -23,6 +23,7 @@ export default {
     pauseDownloads: 'Pause Downloads',
     deleteTask: 'Delete Task',
     deleteTaskTip: 'Do you want to delete task and file?',
+    clearAll: 'Clear Success Record',
     method: 'Method',
     url: 'URL',
     fileName: 'Name',

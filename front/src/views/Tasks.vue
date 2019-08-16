@@ -17,6 +17,10 @@
         icon="ios-trash"
         class="tasks-button"
         @click="onDeleteBatch">{{ $t("tasks.deleteTask") }}</i-button>
+      <i-button type="dashed"
+        icon="ios-trash"
+        class="tasks-button"
+        @click="doClearAll">{{ $t("tasks.clearAll") }}</i-button>
     </div>
 
     <Table :taskList="taskList"
@@ -145,7 +149,18 @@ export default {
     showResolve() {
       this.resolveVisible = true
     },
-
+    doClearAll() {
+      this.delFile = false
+      var ids = this.$refs.taskTable.taskList
+        .filter(task => {
+          return task.info.status == 4
+        })
+        .map(task => {
+          return task.id
+        })
+        .join(',')
+      if (ids.length > 0) this.doDelete(ids)
+    },
     getAllTask() {
       this.$noSpinHttp
         .get(window.location.protocol + '//' + window.location.hostname + ':26339/tasks')

@@ -1,12 +1,11 @@
 package org.pdown.rest.content;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import java.io.File;
-
 import org.pdown.gui.util.UserConfig;
 import org.pdown.rest.base.content.PersistenceContent;
 import org.pdown.rest.entity.ServerConfigInfo;
+
+import java.io.File;
 
 public class ConfigContent extends PersistenceContent<ServerConfigInfo, ConfigContent> {
 
@@ -23,6 +22,13 @@ public class ConfigContent extends PersistenceContent<ServerConfigInfo, ConfigCo
     }
 
     @Override
+    public ServerConfigInfo get() {
+        ServerConfigInfo serverConfigInfo = super.get();
+        if (serverConfigInfo == null) return defaultValue();
+        return serverConfigInfo;
+    }
+
+    @Override
     protected String savePath() {
 
         return UserConfig.getConfigFileNotCreate(".rest-server.cfg");
@@ -32,6 +38,7 @@ public class ConfigContent extends PersistenceContent<ServerConfigInfo, ConfigCo
     protected ServerConfigInfo defaultValue() {
         ServerConfigInfo serverConfigInfo = new ServerConfigInfo();
         //Default values
+        serverConfigInfo.setFilePath(System.getProperty("user.home") + File.separator + "Downloads");
         serverConfigInfo.setTaskLimit(3);
         serverConfigInfo.setConnections(64);
         serverConfigInfo.setPort(26339);

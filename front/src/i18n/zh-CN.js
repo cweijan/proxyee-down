@@ -23,6 +23,7 @@ export default {
     pauseDownloads: '暂停下载',
     deleteTask: '删除任务',
     deleteTaskTip: '是否删除任务和文件？',
+    clearAll: '清空成功记录',
     method: '方法',
     url: '链接',
     fileName: '文件名',
