@@ -1,14 +1,9 @@
 package org.pdown.gui;
 
 import org.pdown.core.util.OsUtil;
-import org.pdown.gui.com.Components;
 import org.pdown.gui.content.PDownConfigContent;
 import org.pdown.gui.extension.ExtensionContent;
 import org.pdown.gui.extension.mitm.util.ExtensionProxyUtil;
-import org.pdown.gui.http.EmbedHttpServer;
-import org.pdown.gui.http.controller.ApiController;
-import org.pdown.gui.http.controller.NativeController;
-import org.pdown.gui.http.controller.PacController;
 import org.pdown.gui.util.*;
 import org.pdown.rest.DownRestServer;
 import org.pdown.rest.content.ConfigContent;
@@ -35,7 +30,6 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 public class DownApplication {
 
@@ -49,11 +43,8 @@ public class DownApplication {
 
     private TrayIcon trayIcon;
 
-    private CountDownLatch countDownLatch;
     //前端页面http服务器端口
     public int FRONT_PORT;
-    //native api服务器端口
-    public int API_PORT;
     //代理服务器端口
     public int PROXY_PORT;
 
@@ -64,30 +55,20 @@ public class DownApplication {
         //load pdown-rest
         initRest();
         initMacMITMTool();
-        initEmbedHttpServer();
         initExtension();
         initTray();
         loadUri(null);
     }
 
 
-    private void initConfig() throws IOException {
+    private void initConfig() {
         PDownConfigContent.getInstance().load();
-        //取前端http server端口
         FRONT_PORT = ConfigUtil.getInt("front.port");
-        //取native api http server端口
-        API_PORT = ConfigUtil.getInt("api.port");
         if ("prd".equals(ConfigUtil.getString("spring.profiles.active"))) {
-            try {
-                //端口被时占用随机分配一个端口
-                API_PORT = OsUtil.getFreePort(API_PORT);
-                if (FRONT_PORT == -1) {
-                    FRONT_PORT = API_PORT;
-                }
-            } catch (IOException e) {
-                LOGGER.error("initConfig error", e);
-                alertAndExit(I18nUtil.getMessage("gui.alert.startError", e.getMessage()));
+            if (FRONT_PORT == -1) {
+                FRONT_PORT = REST_PORT;
             }
+
         }
     }
 
@@ -173,17 +154,6 @@ public class DownApplication {
         }
     }
 
-    private void initEmbedHttpServer() {
-        countDownLatch = new CountDownLatch(1);
-        new Thread(() -> {
-            EmbedHttpServer embedHttpServer = new EmbedHttpServer(API_PORT);
-            embedHttpServer.addController(new NativeController());
-            embedHttpServer.addController(new ApiController());
-            embedHttpServer.addController(new PacController());
-            embedHttpServer.start(future -> countDownLatch.countDown());
-        }).start();
-    }
-
     //加载托盘
     private void initTray() throws AWTException {
         if (OsUtil.isWindows() && SystemTray.isSupported()) {
@@ -240,7 +210,7 @@ public class DownApplication {
 
     //提示并退出程序
     private void alertAndExit(String msg) {
-        Components.alert(msg);
+        JOptionPane.showMessageDialog(null, msg, I18nUtil.getMessage("gui.warning"), JOptionPane.WARNING_MESSAGE);
         System.exit(0);
     }
 
@@ -266,7 +236,7 @@ public class DownApplication {
         }
     }
 
-    private static final int REST_PORT = 26339;
+    public static final int REST_PORT = 26339;
 
     private static void doCheck() {
         if (OsUtil.isBusyPort(REST_PORT)) {

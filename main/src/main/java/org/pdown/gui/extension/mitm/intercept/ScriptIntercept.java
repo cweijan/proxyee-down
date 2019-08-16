@@ -9,6 +9,13 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.AsciiString;
+import org.pdown.gui.DownApplication;
+import org.pdown.gui.content.PDownConfigContent;
+import org.pdown.gui.extension.ContentScript;
+import org.pdown.gui.extension.ExtensionContent;
+import org.pdown.gui.extension.ExtensionInfo;
+import org.pdown.gui.util.ConfigUtil;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -21,12 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import org.pdown.gui.DownApplication;
-import org.pdown.gui.content.PDownConfigContent;
-import org.pdown.gui.extension.ContentScript;
-import org.pdown.gui.extension.ExtensionContent;
-import org.pdown.gui.extension.ExtensionInfo;
-import org.pdown.gui.util.ConfigUtil;
 
 public class ScriptIntercept extends FullResponseIntercept {
 
@@ -95,7 +96,7 @@ public class ScriptIntercept extends FullResponseIntercept {
       ) {
         pdownJs = reader.lines().collect(Collectors.joining("\r\n"));
         pdownJs = pdownJs.replace("${version}", ConfigUtil.getString("version"));
-        pdownJs = pdownJs.replace("${apiPort}", DownApplication.INSTANCE.API_PORT + "");
+        pdownJs = pdownJs.replace("${apiPort}", DownApplication.REST_PORT + "");
         pdownJs = pdownJs.replace("${frontPort}", DownApplication.INSTANCE.FRONT_PORT + "");
         pdownJs = pdownJs.replace("${uiMode}", PDownConfigContent.getInstance().get().getUiMode() + "");
         pdownJs = pdownJs.replace("${content}", scriptsBuilder.toString());

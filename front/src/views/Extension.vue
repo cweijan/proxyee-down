@@ -246,7 +246,7 @@ export default {
     },
     searchExtensions() {
       this.$noSpinHttp
-        .get('http://127.0.0.1:7478/native/getExtensions')
+        .get('/native/getExtensions')
         .then(result => {
           this.page = result.data
           let serverExts = this.page.data

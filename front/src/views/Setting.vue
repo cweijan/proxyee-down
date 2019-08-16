@@ -186,7 +186,9 @@ export default {
       }
     },
     async getConfig() {
-      let downConfig = await this.$noSpinHttp.get('http://127.0.0.1:26339/config')
+      let downConfig = await this.$noSpinHttp.get(
+        window.location.protocol + '//' + window.location.hostname + ':26339/config'
+      )
       let appConfig = await getConfig()
       this.form = {
         downConfig: { ...downConfig.data },
@@ -216,7 +218,10 @@ export default {
           } else {
             downConfig.proxyConfig = { ...this.form.appConfig.proxyConfig }
           }
-          await this.$http.put('http://127.0.0.1:26339/config', downConfig)
+          await this.$http.put(
+            window.location.protocol + '//' + window.location.hostname + ':26339/config',
+            downConfig
+          )
           await setConfig(this.form.appConfig)
           if (this.$i18n.locale != this.form.appConfig.locale) {
             this.$i18n.locale = this.form.appConfig.locale

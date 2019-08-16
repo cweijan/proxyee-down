@@ -29,7 +29,8 @@
 
     <Modal v-model="deleteModal"
       :title="$t('tasks.deleteTask')">
-      <Checkbox :value="delFile" checked="checked"></Checkbox>
+      <Checkbox :value="delFile"
+        checked="checked"></Checkbox>
       <span @click="delFile=!delFile">{{ $t('tasks.deleteTaskTip') }}</span>
       <div slot="footer">
         <Button type="primary"
@@ -49,7 +50,7 @@
 import Table from '../components/Table'
 import Resolve from '../components/Task/Resolve'
 import Create from '../components/Task/Create'
-import { showFile,runFile } from '../common/native'
+import { showFile, runFile } from '../common/native'
 
 export default {
   name: 'tasks',
@@ -70,7 +71,7 @@ export default {
       const downloadingIds = this.taskList.filter(task => task.info.status === 1).map(task => task.id)
 
       this.$noSpinHttp
-        .get('http://127.0.0.1:26339/tasks?status=1')
+        .get(window.location.protocol + '//' + window.location.hostname + ':26339/tasks?status=1')
         .then(result => {
           // Get the list of task IDs that the server is downloading
           const serverDownloadingIds = result.data.map(task => task.id)
@@ -82,21 +83,29 @@ export default {
           })
 
           if (downloadingIds && downloadingIds.length) {
-            this.$noSpinHttp.get('http://127.0.0.1:26339/tasks/progress?ids=' + downloadingIds).then(result => {
-              // Match and update the task information being downloaded
-              result.data.forEach(task => {
-                const index = this.getIndexByTaskId(task.id)
-                if (index >= 0) {
-                  this.taskList[index].info = task.info
-                  this.taskList[index].response = task.response
-                } else {
-                  // Load newly created tasks
-                  this.$noSpinHttp
-                    .get('http://127.0.0.1:26339/tasks/' + task.id)
-                    .then(result => this.taskList.push(result.data))
-                }
+            this.$noSpinHttp
+              .get(
+                window.location.protocol +
+                  '//' +
+                  window.location.hostname +
+                  ':26339/tasks/progress?ids=' +
+                  downloadingIds
+              )
+              .then(result => {
+                // Match and update the task information being downloaded
+                result.data.forEach(task => {
+                  const index = this.getIndexByTaskId(task.id)
+                  if (index >= 0) {
+                    this.taskList[index].info = task.info
+                    this.taskList[index].response = task.response
+                  } else {
+                    // Load newly created tasks
+                    this.$noSpinHttp
+                      .get(window.location.protocol + '//' + window.location.hostname + ':26339/tasks/' + task.id)
+                      .then(result => this.taskList.push(result.data))
+                  }
+                })
               })
-            })
           }
         })
         .catch(error => {
@@ -138,9 +147,10 @@ export default {
     },
 
     getAllTask() {
-      this.$noSpinHttp.get('http://127.0.0.1:26339/tasks').then(result => (this.taskList = result.data))
+      this.$noSpinHttp
+        .get(window.location.protocol + '//' + window.location.hostname + ':26339/tasks')
+        .then(result => (this.taskList = result.data))
     },
-
     onRouteChange(query) {
       const flag = !!(query.request && query.response)
       this.createForm = {

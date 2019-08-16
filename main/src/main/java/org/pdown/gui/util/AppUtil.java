@@ -1,16 +1,5 @@
 package org.pdown.gui.util;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.Authenticator;
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.PasswordAuthentication;
-import java.net.Proxy;
-import java.net.Proxy.Type;
-import java.net.URL;
 import org.pdown.core.boot.HttpDownBootstrap;
 import org.pdown.core.boot.URLHttpDownBootstrapBuilder;
 import org.pdown.core.dispatch.HttpDownCallback;
@@ -25,8 +14,14 @@ import org.pdown.gui.content.PDownConfigContent;
 import org.pdown.gui.extension.mitm.server.PDownProxyServer;
 import org.pdown.gui.extension.mitm.util.ExtensionCertUtil;
 import org.pdown.gui.extension.mitm.util.ExtensionProxyUtil;
-import org.pdown.rest.util.PathUtil;
 import org.springframework.util.StringUtils;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.*;
+import java.net.Proxy.Type;
 
 public class AppUtil {
 
@@ -49,7 +44,7 @@ public class AppUtil {
    */
   public static void refreshPAC() throws IOException {
     if (PDownConfigContent.getInstance().get().getProxyMode() == 1) {
-      ExtensionProxyUtil.enabledPACProxy("http://127.0.0.1:" + DownApplication.INSTANCE.API_PORT + "/pac/pdown.pac?t=" + System.currentTimeMillis());
+      ExtensionProxyUtil.enabledPACProxy("http://127.0.0.1:" + DownApplication.REST_PORT + "/pac/pdown.pac?t=" + System.currentTimeMillis());
     }
   }
 

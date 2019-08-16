@@ -5,30 +5,6 @@ const client = http.build()
 const clientNoSpin = axios.create()
 
 /**
- * 弹出原生文件选择框
- */
-const showFileChooser = () => {
-  return new Promise((resolve, reject) => {
-    client
-      .get('/native/fileChooser')
-      .then(response => resolve(response.data))
-      .catch(error => reject(error))
-  })
-}
-
-/**
- * 弹出原生文件夹选择框
- */
-const showDirChooser = () => {
-  return new Promise((resolve, reject) => {
-    client
-      .get('/native/dirChooser')
-      .then(response => resolve(response.data))
-      .catch(error => reject(error))
-  })
-}
-
-/**
  * 取应用初始化配置信息
  */
 const getInitConfig = () => {
@@ -253,8 +229,6 @@ const copy = data => {
   })
 }
 
-export { showFileChooser }
-export { showDirChooser }
 export { openUrl }
 export { doUpdate }
 export { getUpdateProgress }

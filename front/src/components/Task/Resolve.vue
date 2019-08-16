@@ -126,7 +126,7 @@ export default {
           }
           this.load = true
           this.$http
-            .put('http://127.0.0.1:26339/util/resolve', requestData)
+            .put(window.location.protocol + '//' + window.location.hostname + ':26339/util/resolve', requestData)
             .then(result => {
               this.$emit('input', false)
               const request = JSON.stringify(result.data.request)

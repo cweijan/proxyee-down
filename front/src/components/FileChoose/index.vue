@@ -3,15 +3,10 @@
     <Input class="file-choose-input"
       :value="value" @input="setPath($event)"
       />
-    <!-- <Button type="primary"
-      class="file-choose-button"
-      :disabled="disabled||chooserWait"
-      @click="showChooser">{{ $t('tip.choose') }}</Button> -->
   </div>
 </template>
 
 <script>
-import { showDirChooser, showFileChooser } from '../../common/native'
 
 export default {
   props: {
@@ -34,20 +29,6 @@ export default {
   methods: {
     setPath(event){
       this.$emit('input',event)
-    },
-    showChooser() {
-      this.chooserWait = true
-      let chooserPromise =
-        this.mode === 'dir' ? showDirChooser() : showFileChooser()
-      chooserPromise
-        .then(result => {
-          if (result) {
-            this.$emit('input', result.path)
-          }
-        })
-        .finally(() => {
-          this.chooserWait = false
-        })
     }
   }
 }

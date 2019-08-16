@@ -126,7 +126,10 @@ export default {
           if (this.form.taskId) {
             //refresh download request
             this.$http
-              .put('http://127.0.0.1:26339/tasks/' + this.form.taskId, this.form.request)
+              .put(
+                window.location.protocol + '//' + window.location.hostname + ':26339/tasks/' + this.form.taskId,
+                this.form.request
+              )
               .then(() => {
                 this.$router.push('/')
               })
@@ -136,7 +139,7 @@ export default {
           } else {
             //create download task
             this.$http
-              .post('http://127.0.0.1:26339/tasks', this.form)
+              .post(window.location.protocol + '//' + window.location.hostname + ':26339/tasks', this.form)
               .then(() => {
                 this.$router.push('/')
               })
@@ -154,7 +157,9 @@ export default {
       this.disabledForm = false
       if (visible) {
         //check same task
-        const { data: downTasks } = await this.$http.get('http://127.0.0.1:26339/tasks?status=1,2,3')
+        const { data: downTasks } = await this.$http.get(
+          window.location.protocol + '//' + window.location.hostname + ':26339/tasks?status=1,2,3'
+        )
         this.sameTasks = downTasks
           ? downTasks.filter(task => task.response.supportRange && task.response.totalSize === this.response.totalSize)
           : []
@@ -193,17 +198,19 @@ export default {
       }
     },
     setDefaultConfig() {
-      this.$noSpinHttp.get('http://127.0.0.1:26339/config').then(result => {
-        const serverConfig = result.data
-        this.form.config = {
-          filePath: serverConfig.filePath,
-          connections: serverConfig.connections,
-          timeout: serverConfig.timeout,
-          retryCount: serverConfig.retryCount,
-          autoRename: serverConfig.autoRename,
-          speedLimit: serverConfig.speedLimit
-        }
-      })
+      this.$noSpinHttp
+        .get(window.location.protocol + '//' + window.location.hostname + ':26339/config')
+        .then(result => {
+          const serverConfig = result.data
+          this.form.config = {
+            filePath: serverConfig.filePath,
+            connections: serverConfig.connections,
+            timeout: serverConfig.timeout,
+            retryCount: serverConfig.retryCount,
+            autoRename: serverConfig.autoRename,
+            speedLimit: serverConfig.speedLimit
+          }
+        })
     }
   },
   created() {

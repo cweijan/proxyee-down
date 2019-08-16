@@ -1,17 +1,18 @@
-package org.pdown.gui.http.controller;
+package org.pdown.rest.controller;
 
-import io.netty.channel.Channel;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaderValues;
-import java.util.Set;
+import io.netty.util.AsciiString;
 import org.pdown.gui.DownApplication;
 import org.pdown.gui.extension.ExtensionContent;
-import org.pdown.gui.http.util.HttpHandlerUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("pac")
+import javax.servlet.http.HttpServletResponse;
+import java.util.Set;
+
+@RestController
+@RequestMapping("/pac")
 public class PacController {
 
   private static final String PAC_TEMPLATE = "function FindProxyForURL(url, host) {"
@@ -30,8 +31,8 @@ public class PacController {
       + "  return match ? 'PROXY 127.0.0.1:{port}' : 'DIRECT';"
       + "}";
 
-  @RequestMapping("pdown.pac")
-  public FullHttpResponse build(Channel channel, FullHttpRequest request) throws Exception {
+  @RequestMapping("/pdown.pac")
+  public void build(HttpServletResponse response) throws Exception {
     Set<String> domains = ExtensionContent.getProxyWildCards();
     String pacContent = PAC_TEMPLATE.replace("{port}", DownApplication.INSTANCE.PROXY_PORT + "");
     if (domains != null && domains.size() > 0) {
@@ -46,11 +47,12 @@ public class PacController {
     } else {
       pacContent = pacContent.replace("{domains}", "");
     }
-    FullHttpResponse httpResponse = HttpHandlerUtil.buildContent(pacContent, "application/x-ns-proxy-autoconfig");
-    httpResponse.headers().set(HttpHeaderNames.CACHE_CONTROL, HttpHeaderValues.NO_CACHE);
-    httpResponse.headers().set(HttpHeaderNames.PRAGMA, HttpHeaderValues.NO_CACHE);
-    httpResponse.headers().set(HttpHeaderNames.EXPIRES, 0);
-    return httpResponse;
+    response.setHeader(HttpHeaderNames.CONTENT_TYPE.toString(), AsciiString.cached("application/x-ns-proxy-autoconfig").toString());
+    response.setHeader(HttpHeaderNames.CACHE_CONTROL.toString(), HttpHeaderValues.NO_CACHE.toString());
+    response.setHeader(HttpHeaderNames.PRAGMA.toString(), HttpHeaderValues.NO_CACHE.toString());
+    response.setHeader(HttpHeaderNames.EXPIRES.toString(), String.valueOf(0));
+    response.getWriter().write(pacContent);
+
   }
 
 }

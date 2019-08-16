@@ -18,22 +18,6 @@
       </i-menu-item>
     </i-menu>
 
-    <Modal v-model="hasUpdate"
-      :title="$t('update.checkNew')">
-      <b>{{ $t('update.version') }}：</b>
-      <span>{{ versionInfo.version }}</span>
-      <br>
-      <br>
-      <b>{{ $t('update.changeLog') }}：</b>
-      <div style="padding-top:10px;"
-        v-html="versionInfo.description"></div>
-      <span slot="footer">
-        <Button @click="hasUpdate = false">{{ $t('tip.cancel') }}</Button>
-        <Button type="primary"
-          @click="doUpdate()">{{ $t('update.update') }}</Button>
-      </span>
-    </Modal>
-
     <Modal v-model="restatModel"
       :title="$t('update.done')">
       <h3>{{ $t('update.restart') }}</h3>
@@ -72,7 +56,6 @@ export default {
 
     doUpdate() {
       this.showUpdateProgress = true
-      this.hasUpdate = false
       //开始下载更新包
       doUpdate(this.versionInfo.path)
         .then(() => {
@@ -113,7 +96,6 @@ export default {
 
   data() {
     return {
-      hasUpdate: false,
       showUpdateProgress: false,
       versionInfo: {},
       restatModel: false,

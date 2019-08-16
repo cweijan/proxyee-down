@@ -7,11 +7,11 @@ module.exports = {
   devServer: {
     proxy: {
       '/native': {
-        target: 'http://127.0.0.1:7478',
+        target: 'http://127.0.0.1:26339',
         changeOrigin: true
       },
       '/pac': {
-        target: 'http://127.0.0.1:7478',
+        target: 'http://127.0.0.1:26339',
         changeOrigin: true
       }
     }
