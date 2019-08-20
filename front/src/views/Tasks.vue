@@ -219,11 +219,11 @@ export default {
     },
 
     doPause(ids) {
-      this.$http.put(`http://127.0.0.1:26339/tasks/${ids}/pause`)
+      this.$http.put( window.location.protocol +'//' +window.location.hostname +`:26339/tasks/${ids}/pause`)
     },
 
     doResume(ids) {
-      this.$http.put(`http://127.0.0.1:26339/tasks/${ids}/resume`).then(result => {
+      this.$http.put(window.location.protocol +'//' +window.location.hostname +`:26339/tasks/${ids}/resume`).then(result => {
         const { pauseIds, resumeIds } = result.data
         const modifyTaskStatus = (behavior, status) => {
           result.data[behavior].forEach(id => {
@@ -240,7 +240,7 @@ export default {
 
     doDelete(ids) {
       this.$http
-        .delete(`http://127.0.0.1:26339/tasks/${ids}?delFile=${this.delFile}`)
+        .delete(window.location.protocol +'//' +window.location.hostname +`:26339/tasks/${ids}?delFile=${this.delFile}`)
         .then(() => {
           ids.split(',').forEach(id => {
             const index = this.getIndexByTaskId(id)
