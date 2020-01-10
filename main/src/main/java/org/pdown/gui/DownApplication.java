@@ -10,6 +10,7 @@ import org.pdown.rest.content.ConfigContent;
 import org.pdown.rest.content.RestWebServerFactoryCustomizer;
 import org.pdown.rest.entity.ServerConfigInfo;
 import org.pdown.rest.util.PathUtil;
+import org.pdown.shell.task.DownloadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -250,8 +251,15 @@ public class DownApplication {
     }
 
     public static void main(String[] args) throws Exception {
-        doCheck();
-        new DownApplication().start();
+
+        if (args.length > 0) {
+            DownloadHelper.createDownloadTask("http://8dx.pc6.com/lc6/sftpmsi902690.zip");
+        } else {
+            doCheck();
+            new DownApplication().start();
+        }
 
     }
+
+
 }
