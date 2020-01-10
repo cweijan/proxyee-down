@@ -74,12 +74,12 @@ export default {
   data() {
     return {
       load: false,
-      hasHead: false,
+      hasHead: true,
       hasBody: false,
       form: {
         method: 'GET',
         url: '',
-        heads: [],
+        heads: [{key:'Cookie',value:''},{key:'Referer',value:''}],
         body: '',
         dir: ''
       },
@@ -145,7 +145,7 @@ export default {
     onReset(visible) {
       if (visible) {
         this.$refs['form'].resetFields()
-        this.hasHead = false
+        this.hasHead = true
         this.hasBody = false
       }
     }
