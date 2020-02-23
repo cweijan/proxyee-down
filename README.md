@@ -12,6 +12,10 @@ Proxyee Down 是一款开源的免费 HTTP 高速下载器，底层使用`netty`
 - 删除任务默认勾选删除文件
 - 将各种文件移至用户目录
 
+## 编译
+- 前端: npm run build 
+- 后端: mvn package -P prd
+
 ## 使用说明
 
 - **windows**:  

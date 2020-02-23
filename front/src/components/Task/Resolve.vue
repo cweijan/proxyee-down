@@ -1,6 +1,6 @@
 <template>
   <Modal :title="$t('tasks.createTask')"
-    :value="value"
+    :value="value" width="860"
     @input="$emit('input', arguments[0])"
     :closable="false"
     :mask-closable="false"
@@ -19,7 +19,7 @@
       </FormItem>
       <FormItem :label="$t('tasks.url')"
         prop="url">
-        <Input v-model="form.url" />
+        <Input v-model="form.url" @input="intelliUrl" />
       </FormItem>
       <FormItem :label="$t('tasks.option')">
         <Checkbox v-model="hasHead">{{ $t('tasks.head') }}</Checkbox>
@@ -36,7 +36,8 @@
             placeholder="key" />
           <Input class="head-input"
             v-model="head.value"
-            placeholder="value" />
+            placeholder="value"
+            @input="intelliInput(head)" />
           <Icon v-if="index !== 0"
             type="minus-circled"
             @click="delHead(index)"></Icon>
@@ -79,7 +80,13 @@ export default {
       form: {
         method: 'GET',
         url: '',
-        heads: [{key:'Cookie',value:''},{key:'Referer',value:''}],
+        heads: [
+          {
+            key: 'User-Agent',
+            value:
+              'Mozilla/5.0 (Linux; Android 9; Redmi Note 8 Pro Build/PPR1.180610.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/78.0.3904.96 Mobile Safari/537.36'
+          }
+        ],
         body: '',
         dir: ''
       },
@@ -99,6 +106,16 @@ export default {
     }
   },
   methods: {
+    intelliUrl(){
+      this.form.url=this.form.url.replace("GET ","").replace("POST ","").replace("HTTP/1.1","").trim()
+    },
+    intelliInput(head) {
+      var headPair = head.value.split(': ')
+      if (headPair.length == 2) {
+        head.key = headPair[0].replace(': ', '')
+        head.value = headPair[1]
+      }
+    },
     addHead() {
       this.form.heads.push({ key: '', value: '' })
     },
