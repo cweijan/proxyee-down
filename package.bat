@@ -1,0 +1,1 @@
+cd front && npm run build && cd .. && cd main && mvn package -P prd

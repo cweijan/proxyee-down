@@ -2,7 +2,14 @@
 
 Proxyee Down 是一款开源的免费 HTTP 高速下载器，底层使用`netty`开发，支持自定义 HTTP 请求下载且支持扩展功能，可以通过安装扩展实现特殊的下载需求, 该版本Fork自3.03版本
 
+## 未来路线
+- 增加错误提示: HttpDownBootstrap类对于错误的处理不合理, 没有友好提示
+
 ## 更新日志
+
+### 3.2.0(2020/6/18)
+
+- 修复下载链接有端口号无法下载
 
 ### 3.1.0 
 
@@ -12,26 +19,21 @@ Proxyee Down 是一款开源的免费 HTTP 高速下载器，底层使用`netty`
 - 删除任务默认勾选删除文件
 - 将各种文件移至用户目录
 
+## 开发
+
+本项目后端主要使用 java+spring boot+netty，前端使用 vue.js+iview。
+
+### 环境
+![](https://img.shields.io/badge/JAVA-1.8%2B-brightgreen.svg) ![](https://img.shields.io/badge/maven-3.0%2B-brightgreen.svg) ![](https://img.shields.io/badge/node.js-8.0%2B-brightgreen.svg)
+
 ## 编译
 - 前端: npm run build 
 - 后端: mvn package -P prd
 
-## 使用说明
-
-- **windows**:  
-  下载好 windows 版本的压缩包之后，解压至任意目录，会得到一个文件夹，执行文件夹里面的`Proxyee Down.exe`文件即可。  
-  (_注：360 可能会报毒，需要加入白名单_)
-  ![](https://monkeywie.github.io/2018/09/05/proxyee-down-3-0-guide/2018-09-05-13-49-38.png)
-- **mac**:  
-  下载好 mac 版本的压缩包之后，解压至任意目录，会得到一个`Proxyee Down`App，双击运行即可。  
-  (_注：mac 系统切换代理和安装证书需要管理员权限，所以在启动时会提示输入密码_)
-  ![](https://monkeywie.github.io/2018/09/05/proxyee-down-3-0-guide/2018-09-05-13-51-38.png)
-- **linux**:  
-  linux 系统目前没有打原生包，要自行下载 jar 包运行，需安装 JRE 或 JDK(_要求版本不低于 1.8_)，下载完成后在命令行中运行：
+## 运行
   ```
   java -jar proxyee-down-main.jar
   ```
-  (_注：如果使用 openjdk 的话需要安装 openjfx_)
 
 ## 任务模块
 
@@ -80,27 +82,3 @@ Proxyee Down 是一款开源的免费 HTTP 高速下载器，底层使用`netty`
 
   - **扩展实现原理**  
     扩展功能是由 MITM(中间人攻击)技术实现的，使用[proxyee](https://github.com/monkeyWie/proxyee)框架拦截和修改`HTTP`、`HTTPS`的请求和响应报文，从而实现对应的扩展脚本注入。
-
-## 开发
-
-本项目后端主要使用 java+spring boot+netty，前端使用 vue.js+iview。
-
-### 环境
-![](https://img.shields.io/badge/JAVA-1.8%2B-brightgreen.svg) ![](https://img.shields.io/badge/maven-3.0%2B-brightgreen.svg) ![](https://img.shields.io/badge/node.js-8.0%2B-brightgreen.svg)
-
-### 编译
-
-```
-git clone https://github.com/monkeyWie/proxyee-down.git
-cd proxyee-down/front
-#build html
-npm install
-npm run build
-cd ../main
-mvn clean package -Pprd
-```
-
-### 运行
-```
-java -jar proxyee-down-main.jar
-```
