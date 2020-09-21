@@ -27,6 +27,7 @@ export default {
     method: 'Method',
     url: 'URL',
     fileName: 'Name',
+    extName: 'Ext',
     fileSize: 'Size',
     connections: 'Connections',
     filePath: 'Path',

@@ -27,6 +27,7 @@ export default {
     method: '方法',
     url: '链接',
     fileName: '文件名',
+    extName: '扩展名',
     fileSize: '大小',
     connections: '连接数',
     filePath: '路径',

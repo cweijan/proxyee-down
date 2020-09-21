@@ -1,67 +1,71 @@
 <template>
   <Modal :title="$t('tasks.createTask')"
-    :value="visible"
-    @input="closeModal"
-    @on-visible-change="init"
-    :closable="false"
-    :mask-closable="false">
+         :value="visible"
+         @input="closeModal"
+         @on-visible-change="init"
+         :closable="false"
+         :mask-closable="false">
     <Form v-if="visible"
-      ref="form"
-      :model="form"
-      :rules="rules"
-      :label-width="70">
+          ref="form"
+          :model="form"
+          :rules="rules"
+          :label-width="70">
       <FormItem v-if="sameTasks.length>0"
-        prop="taskId"
-        :label="$t('tasks.sameTaskList')">
+                prop="taskId"
+                :label="$t('tasks.sameTaskList')">
         <Select v-model="form.taskId"
-          clearable
-          @on-change="sameTaskChange"
-          :placeholder="$t('tasks.sameTaskPlaceholder')">
+                clearable
+                @on-change="sameTaskChange"
+                :placeholder="$t('tasks.sameTaskPlaceholder')">
           <Option v-for="task in sameTasks"
-            :key="task.id"
-            :label="task.config.filePath+getFileSeparator()+task.response.fileName"
-            :value="task.id">
+                  :key="task.id"
+                  :label="task.config.filePath+getFileSeparator()+task.response.fileName"
+                  :value="task.id">
           </Option>
         </Select>
       </FormItem>
       <template v-if="!selectOldTask">
-        <FormItem :label="$t('tasks.fileName')"
-          prop="response.fileName">
-          <Input :disabled="disabledForm"
-            v-model="form.response.fileName" />
+        <FormItem :label="$t('tasks.fileName')">
+          <Input :disabled="disabledForm" v-model="temp.urlName"/>
         </FormItem>
-        <FormItem :label="$t('tasks.fileSize')">{{ form.response.totalSize?$numeral(form.response.totalSize).format('0.00b'):$t('tasks.unknowLeft') }}</FormItem>
+        <FormItem :label="$t('tasks.extName')">
+          <Input :disabled="disabledForm" v-model="temp.extName"/>
+        </FormItem>
+        <FormItem :label="$t('tasks.fileSize')">
+          {{ form.response.totalSize ? $numeral(form.response.totalSize).format('0.00b') : $t('tasks.unknowLeft') }}
+        </FormItem>
         <FormItem :label="$t('tasks.connections')"
-          prop="config.connections">
+                  prop="config.connections">
           <Slider v-if="response.supportRange"
-            v-model="form.config.connections"
-            :disabled="disabledForm"
-            :min="2"
-            :max="256"
-            :step="2"
-            show-input />
+                  v-model="form.config.connections"
+                  :disabled="disabledForm"
+                  :min="2"
+                  :max="256"
+                  :step="2"
+                  show-input/>
           <Slider v-else
-            disabled
-            v-model="form.config.connections"
-            :min="1"
-            :max="1"
-            show-input />
+                  disabled
+                  v-model="form.config.connections"
+                  :min="1"
+                  :max="1"
+                  show-input/>
         </FormItem>
         <FormItem :label="$t('tasks.filePath')"
-          prop="config.filePath">
+                  prop="config.filePath">
           <FileChoose :disabled="disabledForm"
-            v-model="form.config.filePath" />
+                      v-model="form.config.filePath"/>
         </FormItem>
       </template>
     </Form>
     <div slot="footer">
       <Button type="primary"
-        @click="onSubmit">{{ $t('tip.ok') }}</Button>
+              @click="onSubmit">{{ $t('tip.ok') }}
+      </Button>
       <Button @click="closeModal">{{ $t('tip.cancel') }}</Button>
     </div>
     <Spin size="large"
-      fix
-      v-if="load" />
+          fix
+          v-if="load"/>
   </Modal>
 </template>
 
@@ -82,6 +86,10 @@ export default {
       load: false,
       selectOldTask: false,
       disabledForm: false,
+      temp: {
+        urlName: null,
+        extName: null,
+      },
       form: {
         taskId: undefined,
         request: this.request,
@@ -89,9 +97,9 @@ export default {
         config: {}
       },
       rules: {
-        taskId: [{ required: true, message: this.$t('tip.notNull') }],
-        'response.fileName': [{ required: true, message: this.$t('tip.notNull') }],
-        'config.filePath': [{ required: true, message: this.$t('tip.notNull') }]
+        taskId: [{required: true, message: this.$t('tip.notNull')}],
+        'response.fileName': [{required: true, message: this.$t('tip.notNull')}],
+        'config.filePath': [{required: true, message: this.$t('tip.notNull')}]
       },
       sameTasks: []
     }
@@ -116,6 +124,19 @@ export default {
     FileChoose
   },
   methods: {
+    initUrlName() {
+      if (!this.form.response) return
+      const fileName = this.form.response.fileName
+      if (!fileName) return
+      const index = fileName.lastIndexOf('.')
+      if (index !== -1) {
+        this.temp.urlName = fileName.substr(0, index)
+        this.temp.extName = fileName.substr(index + 1)
+      } else {
+        this.temp.urlName = fileName
+        this.temp.extName = null
+      }
+    },
     closeModal() {
       this.$emit('close')
     },
@@ -126,43 +147,45 @@ export default {
           if (this.form.taskId) {
             //refresh download request
             this.$http
-              .put(
-                window.location.protocol + '//' + window.location.hostname + ':26339/tasks/' + this.form.taskId,
-                this.form.request
-              )
-              .then(() => {
-                this.$router.push('/')
-              })
-              .finally(() => {
-                this.load = false
-              })
+                .put(
+                    window.location.protocol + '//' + window.location.hostname + ':26339/tasks/' + this.form.taskId,
+                    this.form.request
+                )
+                .then(() => {
+                  this.$router.push('/')
+                })
+                .finally(() => {
+                  this.load = false
+                })
           } else {
+            this.form.response.fileName = this.temp.urlName + (this.temp.extName ? '.' + this.temp.extName : '')
             //create download task
             this.$http
-              .post(window.location.protocol + '//' + window.location.hostname + ':26339/tasks', this.form)
-              .then(() => {
-                this.$router.push('/')
-              })
-              .finally(() => {
-                this.load = false
-              })
+                .post(window.location.protocol + '//' + window.location.hostname + ':26339/tasks', this.form)
+                .then(() => {
+                  this.$router.push('/')
+                })
+                .finally(() => {
+                  this.load = false
+                })
           }
         }
       })
     },
     async init(visible) {
+      this.initUrlName()
       //reset params
       this.sameTasks = []
       this.form.taskId = undefined
       this.disabledForm = false
       if (visible) {
         //check same task
-        const { data: downTasks } = await this.$http.get(
-          window.location.protocol + '//' + window.location.hostname + ':26339/tasks?status=1,2,3'
+        const {data: downTasks} = await this.$http.get(
+            window.location.protocol + '//' + window.location.hostname + ':26339/tasks?status=1,2,3'
         )
         this.sameTasks = downTasks
-          ? downTasks.filter(task => task.response.supportRange && task.response.totalSize === this.response.totalSize)
-          : []
+            ? downTasks.filter(task => task.response.supportRange && task.response.totalSize === this.response.totalSize)
+            : []
         if (this.sameTasks.length > 0) {
           const _this = this
           this.$Modal.confirm({
@@ -190,7 +213,7 @@ export default {
     sameTaskChange(taskId) {
       const oldTask = this.sameTasks.find(task => task.id == taskId)
       if (oldTask) {
-        this.form.config = { ...oldTask.config }
+        this.form.config = {...oldTask.config}
         this.selectOldTask = false
         this.disabledForm = true
       } else {
@@ -199,18 +222,18 @@ export default {
     },
     setDefaultConfig() {
       this.$noSpinHttp
-        .get(window.location.protocol + '//' + window.location.hostname + ':26339/config')
-        .then(result => {
-          const serverConfig = result.data
-          this.form.config = {
-            filePath: serverConfig.filePath,
-            connections: serverConfig.connections,
-            timeout: serverConfig.timeout,
-            retryCount: serverConfig.retryCount,
-            autoRename: serverConfig.autoRename,
-            speedLimit: serverConfig.speedLimit
-          }
-        })
+          .get(window.location.protocol + '//' + window.location.hostname + ':26339/config')
+          .then(result => {
+            const serverConfig = result.data
+            this.form.config = {
+              filePath: serverConfig.filePath,
+              connections: serverConfig.connections,
+              timeout: serverConfig.timeout,
+              retryCount: serverConfig.retryCount,
+              autoRename: serverConfig.autoRename,
+              speedLimit: serverConfig.speedLimit
+            }
+          })
     }
   },
   created() {
