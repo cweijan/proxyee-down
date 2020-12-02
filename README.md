@@ -7,6 +7,13 @@ Proxyee Down 是一款开源的免费 HTTP 高速下载器，底层使用`netty`
 
 ## 更新日志
 
+## 快速使用
+
+需要安装node.js和java
+1. npm i -g proxyee
+2. proxyee
+
+
 ### 3.2.0(2020/6/18)
 
 - 修复下载链接有端口号无法下载
