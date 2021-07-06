@@ -1,5 +1,5 @@
 <template>
-  <Modal :title="$t('tasks.createTask')"
+  <Modal :title="selectOldTask?'刷新任务':$t('tasks.createTask')"
          :value="visible"
          @input="closeModal"
          @on-visible-change="init"
@@ -200,17 +200,21 @@ export default {
             ? downTasks.filter(task => task.response.supportRange && task.response.totalSize === this.response.totalSize)
             : []
         if (this.sameTasks.length > 0) {
-          const _this = this
+          // this.selectOldTask = true
           this.$Modal.confirm({
-            title: _this.$t('tip.tip'),
-            content: _this.$t('tasks.checkSameTask'),
-            okText: _this.$t('tip.ok'),
-            cancelText: _this.$t('tip.cancel'),
-            onOk() {
-              _this.selectOldTask = true
+            title: this.$t('tip.tip'),
+            content: this.$t('tasks.checkSameTask'),
+            okText: this.$t('tip.ok'),
+            cancelText: this.$t('tip.cancel'),
+            onOk:()=> {
+              this.selectOldTask = true
+              if(this.sameTasks.length==1){
+                this.form.taskId=this.sameTasks[0].id
+                this.onSubmit()
+              }
             },
-            onCancel() {
-              _this.sameTasks = []
+            onCancel:() =>{
+              this.sameTasks = []
             }
           })
         }
