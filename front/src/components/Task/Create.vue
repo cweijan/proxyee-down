@@ -29,7 +29,17 @@
           <Input :disabled="disabledForm" v-model="temp.urlName"/>
         </FormItem>
         <FormItem :label="$t('tasks.extName')">
-          <Input :disabled="disabledForm" v-model="temp.extName"/>
+           <Row>
+             <Col span="19">
+              <Input :disabled="disabledForm" v-model="temp.extName"/>
+            </Col>
+             <Col span="5">
+            <Select :disabled="disabledForm" v-model="temp.extName" >
+                <Option :value="defaultExt">{{defaultExt}}</Option>
+                <Option :value="'mp4'">mp4</Option>
+              </Select>
+            </Col>
+           </Row>
         </FormItem>
         <FormItem :label="$t('tasks.fileSize')">
           {{ form.response.totalSize ? $numeral(form.response.totalSize).format('0.00b') : $t('tasks.unknowLeft') }}
@@ -86,6 +96,7 @@ export default {
       load: false,
       selectOldTask: false,
       disabledForm: false,
+      defaultExt:null,
       temp: {
         urlName: null,
         extName: null,
@@ -132,9 +143,11 @@ export default {
       if (index !== -1) {
         this.temp.urlName = fileName.substr(0, index)
         this.temp.extName = fileName.substr(index + 1)
+        this.defaultExt = fileName.substr(index + 1)
       } else {
         this.temp.urlName = fileName
         this.temp.extName = null
+        this.defaultExt = null
       }
     },
     closeModal() {
