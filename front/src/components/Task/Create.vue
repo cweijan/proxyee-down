@@ -26,7 +26,7 @@
       </FormItem>
       <template v-if="!selectOldTask">
         <FormItem :label="$t('tasks.fileName')">
-          <Input :disabled="disabledForm" v-model="temp.urlName"/>
+          <Input :disabled="disabledForm" v-model="temp.urlName" :autofocus='true'/>
         </FormItem>
         <FormItem :label="$t('tasks.extName')">
            <Row>
