@@ -19,6 +19,7 @@ yarn-error.log*
 *.njsproj4
 *.sln
 *.sw*
+package-lock.json
 
 .vscode/*
 !.vscode/settings.json

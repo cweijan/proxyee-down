@@ -19,14 +19,11 @@
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",
-    "@vue/cli-plugin-eslint": "^3.0.1",
     "@vue/cli-service": "^3.0.1",
-    "@vue/eslint-config-prettier": "^3.0.1",
     "babel-plugin-jsx-v-model": "^2.0.3",
     "iview-loader": "^1.2.1",
     "less": "^3.8.1",
     "less-loader": "^5.0.0",
-    "lint-staged": "^6.0.0",
     "vue-template-compiler": "^2.5.17"
   },
   "browserslist": [
